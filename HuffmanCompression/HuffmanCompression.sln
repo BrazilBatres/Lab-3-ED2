@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.29728.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HuffmanCompression", "HuffmanCompression\HuffmanCompression.csproj", "{EF2E917B-1055-4198-A3F4-CCEC176F66E3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConsole", "TestConsole\TestConsole.csproj", "{7372477E-6717-445A-9020-550A8A5BE8DB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{D501295E-0CF2-4FB2-B4F7-B633FEC383D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{EF2E917B-1055-4198-A3F4-CCEC176F66E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EF2E917B-1055-4198-A3F4-CCEC176F66E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EF2E917B-1055-4198-A3F4-CCEC176F66E3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7372477E-6717-445A-9020-550A8A5BE8DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7372477E-6717-445A-9020-550A8A5BE8DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7372477E-6717-445A-9020-550A8A5BE8DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7372477E-6717-445A-9020-550A8A5BE8DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D501295E-0CF2-4FB2-B4F7-B633FEC383D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D501295E-0CF2-4FB2-B4F7-B633FEC383D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D501295E-0CF2-4FB2-B4F7-B633FEC383D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D501295E-0CF2-4FB2-B4F7-B633FEC383D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
