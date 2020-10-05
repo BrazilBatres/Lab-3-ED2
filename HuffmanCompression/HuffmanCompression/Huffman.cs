@@ -18,7 +18,7 @@ namespace HuffmanCompression
 
         }
          
-        string CharacterSubstitution(string Text)
+        byte[] CharacterSubstitution(string Text)
         {
             string bitText = "";
             for (int i = 0; i < Text.Length; i++)
@@ -37,6 +37,22 @@ namespace HuffmanCompression
                 Bytes.Enqueue(bitText.Substring(0, 8));
                 bitText = bitText.Remove(0, 8);
             }
+            byte[] DecimalBytes = new byte[Bytes.Count];
+            int count = Bytes.Count;
+            for (int i = 0; i < count; i++)
+            {
+                DecimalBytes[i] = ToDecimal(Bytes.Dequeue());
+            }
+        }
+        byte ToDecimal(string eightbits)
+        {
+            byte ToReturn = 0;
+            for (int i = 0; i < 8; i++)
+            {
+                
+                ToReturn += Convert.ToByte(eightbits[7 - i] * Math.Pow(2, i));
+            }
+            return ToReturn;
         }
         void AssignPrefixCodes()
         {
