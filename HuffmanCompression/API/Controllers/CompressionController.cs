@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using API.Models;
 using HuffmanCompression;
 using System.Text;
+using System.Text.Json;
 
 namespace API.Controllers
 {
@@ -43,26 +44,45 @@ namespace API.Controllers
             result.FileBytes = ByteArray;
             result.contentType = "Compressed File / huff";
             result.FileName = name;
-
             return File(result.FileBytes, result.contentType, result.FileName + ".huff");
         }
 
         [Route("decompress")]
 
-        public CustomFile Decompress()
+        public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
+            string OriginalName = file.FileName;
+            Huffman decompresser = new Huffman();
+            using (var Memory = new MemoryStream())
+            {
+                await file.CopyToAsync(Memory);
+                string CompressedFile = Encoding.ASCII.GetString(Memory.ToArray());
+                decompresser.Decompress(CompressedFile);
+            }
 
         }
 
         [HttpGet]
-        
         public IActionResult ReturnJSON()
         {
-            string path = _env.ContentRootPath;
-            using (StreamReader = )
-            {
+                List<string> Compressions = new List<string>();
+                string path = _env.ContentRootPath;
+                using (StreamReader reader = new StreamReader(path+"/compressions.txt"))
+                {
+                    string siguiente = "";
+                    do
+                    {
+                        siguiente = reader.ReadLine();
+                        if (siguiente != null)
+                        {
+                            Compressions.Add(siguiente);
+                        }
 
-            }
+                    } while (siguiente != null);
+
+                    JsonSerializer.Serialize(Compressions);
+                }
+                return Ok(Compressions);
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HuffmanCompression
 {
-    class Huffman: ICompression
+    public class Huffman: ICompression
     {
         Dictionary<char, Character> Characters = new Dictionary<char, Character>();
         HeapQueue<BinaryNode> PriorityQueue = new HeapQueue<BinaryNode>();
