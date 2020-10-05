@@ -4,13 +4,13 @@ using System.Text;
 
 namespace HuffmanCompression
 {
-    class Huffman: ICompression
+   public class Huffman: ICompression
     {
         Dictionary<char, Character> Characters = new Dictionary<char, Character>();
         HeapQueue<BinaryNode> PriorityQueue = new HeapQueue<BinaryNode>();
         BinaryHuffTree huffTree = new BinaryHuffTree();
         double totalCharQuantity;
-        public string Compress(string ToCompresstxt)
+        public byte[] Compress(string ToCompresstxt)
         {
             //Método para tomar frecuencias de caracteres
             AssignPrefixCodes();
@@ -18,7 +18,7 @@ namespace HuffmanCompression
 
         }
          
-        string CharacterSubstitution(string Text)
+        string CharacterSubstitution(byte Text)
         {
             string bitText = "";
             for (int i = 0; i < Text.Length; i++)
