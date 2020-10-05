@@ -10,7 +10,7 @@ namespace HuffmanCompression
         HeapQueue<BinaryNode> PriorityQueue = new HeapQueue<BinaryNode>();
         BinaryHuffTree huffTree = new BinaryHuffTree();
         double totalCharQuantity;
-        public string Compress(string ToCompresstxt)
+        public byte[] Compress(string ToCompresstxt)
         {
             //Método para tomar frecuencias de caracteres
             AssignPrefixCodes();
