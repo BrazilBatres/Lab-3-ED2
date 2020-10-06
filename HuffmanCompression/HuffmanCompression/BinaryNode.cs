@@ -14,7 +14,20 @@ namespace HuffmanCompression
 
         public int CompareTo(object obj)
         {
-            throw new NotImplementedException();
+            var comparator = (BinaryNode)obj;
+
+            if (character.CompareTo(comparator.character) > 0)
+            {
+                return 1;
+            }
+            else if (character.CompareTo(comparator.character) < 0)
+            {
+                return -1;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

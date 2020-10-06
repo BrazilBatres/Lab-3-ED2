@@ -4,7 +4,7 @@ using System.Text;
 
 namespace HuffmanCompression
 {
-    class Character
+    public class Character
     {
         
         public int frecuency;

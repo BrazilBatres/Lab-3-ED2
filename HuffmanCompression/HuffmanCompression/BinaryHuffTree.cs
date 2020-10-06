@@ -10,7 +10,7 @@ namespace HuffmanCompression
         BinaryNode Root;
         public void Insertion(BinaryNode newValue, BinaryNode newValue2)
         {
-
+            Root = new BinaryNode();
             Root.Priority = newValue.Priority + newValue2.Priority;
             Root.LeftSon = newValue;
             Root.RightSon = newValue2;
@@ -18,7 +18,7 @@ namespace HuffmanCompression
         public BinaryNode GetRoot()
         {
             BinaryNode toReturn = Root;
-            Root = null;
+            //Root = null;
             return toReturn;
         }
 
