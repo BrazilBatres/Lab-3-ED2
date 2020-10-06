@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace HuffmanCompression
@@ -101,6 +103,36 @@ namespace HuffmanCompression
             throw new NotImplementedException();
         }
 
+        public void UpdateCompressions(string path, string name, string route, double originalSize, double CompressedSize)
+        {
+            double compressionFactor, compressionRatio, reductionPercentage;
+
+            compressionRatio = CompressedSize / originalSize;
+            compressionFactor = originalSize / CompressedSize;
+            reductionPercentage = compressionRatio * 100;
+
+            List<string> PreviousFile = new List<string>();
+            using (StreamReader reader = new StreamReader(path))
+            {
+                string NextLine;
+                do
+                {
+                    NextLine = reader.ReadLine();
+                    PreviousFile.Add(NextLine);
+                } while (NextLine != null);
+
+            }
+            int LineCount = PreviousFile.Count;
+            using (StreamWriter writer = new StreamWriter(path))
+            {
+                for (int i = 0; i < LineCount; i++)
+                {
+                    writer.WriteLine(PreviousFile.First());
+                    PreviousFile.Remove(PreviousFile.First());
+                }
+                writer.WriteLine("{" + "\"originalName\" : \"" + name + "\", \"compressedFilePath\" : \"" + route + "\", \"compressionRatio\" : " + compressionRatio.ToString() + ", \"compressionFactor\" : " + compressionFactor.ToString() + " , \"reductionPercentage\" : " + reductionPercentage.ToString() + "}");
+            }
+        }
         
     }
 }

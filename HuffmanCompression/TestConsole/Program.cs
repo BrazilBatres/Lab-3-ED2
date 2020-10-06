@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace TestConsole
 {
@@ -39,12 +42,31 @@ namespace TestConsole
             //        Tabla.Add(letter);
             //    }
             //}
-            int entero = 3;
-            char caracter = '3';
-            double doble = 3.5;
-            Console.WriteLine(Convert.ToByte(doble));
-            Console.WriteLine(Convert.ToByte((char)caracter));
-            Console.ReadKey();
+            //int entero = 3;
+            //char caracter = '3';
+            //double doble = 3.5;
+            //Console.WriteLine(Convert.ToByte(doble));
+            //Console.WriteLine(Convert.ToByte((char)caracter));
+            //Console.ReadKey();
+            string hola;
+            using (StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\chino.txt"))
+            {
+                hola = reader.ReadToEnd();
+            }
+            byte[] array = Encoding.ASCII.GetBytes(hola);
+            string stringg = Encoding.ASCII.GetString(array);
+
+            Console.WriteLine("Tamaño en disco en bytes: ");
+            Console.WriteLine(array.Length);
+            Console.WriteLine("Tamaño de texto: ");
+            Console.WriteLine(hola.Length);           
+            
+
+
+
         }
+
+
+       
     }
 }

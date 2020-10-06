@@ -31,20 +31,25 @@ namespace API.Controllers
 
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
+            string path = _env.ContentRootPath;
             byte[] ByteArray = null;
             CustomFile result = new CustomFile();
             Huffman compression = new Huffman();
+            double originalSize;
             using (var Memory = new MemoryStream())
             {
                 await file.CopyToAsync(Memory);
                 string content = Encoding.ASCII.GetString(Memory.ToArray());
                 ByteArray = compression.Compress(content);
+                originalSize = Memory.Length;
             }
-
+            double compressedSize = ByteArray.Length;
+            compression.UpdateCompressions(path, name, path, originalSize, compressedSize);
             result.FileBytes = ByteArray;
             result.contentType = "Compressed File / huff";
             result.FileName = name;
-            return File(result.FileBytes, result.contentType, result.FileName + ".huff");
+            
+            return Ok(result);
         }
 
         [Route("decompress")]
