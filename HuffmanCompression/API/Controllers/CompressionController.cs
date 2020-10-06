@@ -49,7 +49,7 @@ namespace API.Controllers
             result.contentType = "Compressed File / huff";
             result.FileName = name;
             
-            return Ok(result);
+            return File(result.FileBytes, result.contentType, result.FileName);
         }
 
         [Route("decompress")]
@@ -58,13 +58,18 @@ namespace API.Controllers
         {
             string OriginalName = file.FileName;
             Huffman decompresser = new Huffman();
+            byte[] decompressedText;
             using (var Memory = new MemoryStream())
             {
                 await file.CopyToAsync(Memory);
                 string CompressedFile = Encoding.ASCII.GetString(Memory.ToArray());
-                decompresser.Decompress(CompressedFile);
+                decompressedText = Encoding.ASCII.GetBytes(decompresser.Decompress(CompressedFile));
             }
-
+            CustomFile result = new CustomFile();
+            result.FileBytes = decompressedText;
+            result.contentType = "text File / txt";
+            result.FileName = OriginalName;
+            return File(result.FileBytes, result.contentType, result.FileName);
         }
 
         [HttpGet]
