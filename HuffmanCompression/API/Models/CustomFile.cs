@@ -10,5 +10,6 @@ namespace API.Models
         public byte[] FileBytes { get; set; }
         public string contentType { get; set; }
         public string FileName { get; set; }
+        public string OriginalName { get; set; }
     }
 }

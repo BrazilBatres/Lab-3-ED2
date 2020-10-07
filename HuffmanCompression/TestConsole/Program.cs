@@ -25,26 +25,26 @@ namespace TestConsole
             //int entero = 3;
             //Console.WriteLine(ans1);
             //Console.WriteLine(Convert.ToInt32('1'.ToString()));
-            Console.WriteLine("Escriba texto a comprimir");
-            string text = Console.ReadLine();
+            //Console.WriteLine("Escriba texto a comprimir");
+            //string text = Console.ReadLine();
             Huffman huffman = new Huffman();
-            using (StreamWriter writer = new StreamWriter(@"C:\Users\brazi\Desktop\huff.txt"))
-            {
-                byte[] towrite = huffman.Compress(text);
-                for (int i = 0; i < towrite.Length; i++)
-                {
-                    writer.Write(Convert.ToChar(towrite[i]).ToString());
-                }
-            }
-            string text2 = "";
-            using (StreamReader reader = new StreamReader(@"C:\Users\brazi\Desktop\huff.txt"))
-            {
-                text2 = reader.ReadToEnd();
-            }
-            string text3 = huffman.Decompress(text2);
-            Console.WriteLine(text3);
-            Console.WriteLine(text == text3);
-            Console.ReadKey();
+            //using (StreamWriter writer = new StreamWriter(@"C:\Users\brazi\Desktop\huff.txt"))
+            //{
+            //    byte[] towrite = huffman.Compress(text);
+            //    for (int i = 0; i < towrite.Length; i++)
+            //    {
+            //        writer.Write(Convert.ToChar(towrite[i]).ToString());
+            //    }
+            //}
+            //string text2 = "";
+            //using (StreamReader reader = new StreamReader(@"C:\Users\brazi\Desktop\huff.txt"))
+            //{
+            //    text2 = reader.ReadToEnd();
+            //}
+            //string text3 = huffman.Decompress(text2);
+            //Console.WriteLine(text3);
+            //Console.WriteLine(text == text3);
+            //Console.ReadKey();
 
             //List<Letter> Tabla = new List<Letter>();
             //string str = "HHHAAAABBBEE";
@@ -85,9 +85,11 @@ namespace TestConsole
             //Console.WriteLine(Convert.ToByte((char)caracter));
             //Console.ReadKey();
             string hola;
-            using (StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\chino.txt"))
+            // Descarga el cuento.txt de slack y comprímelo y mándalo acá
+            using (StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\Hola.huff"))
             {
                 hola = reader.ReadToEnd();
+                string hey = huffman.Decompress(hola);
             }
             byte[] array = Encoding.ASCII.GetBytes(hola);
             string stringg = Encoding.ASCII.GetString(array);

@@ -46,10 +46,11 @@ namespace API.Controllers
             double compressedSize = ByteArray.Length;
             compression.UpdateCompressions(path, name, path, originalSize, compressedSize);
             result.FileBytes = ByteArray;
-            result.contentType = "Compressed File / huff";
+            result.contentType = "image / huff";
             result.FileName = name;
+
             
-            return File(result.FileBytes, result.contentType, result.FileName);
+            return File(result.FileBytes, result.contentType, result.FileName + ".huff");
         }
 
         [Route("decompress")]
@@ -77,7 +78,9 @@ namespace API.Controllers
         {
                 List<string> Compressions = new List<string>();
                 string path = _env.ContentRootPath;
-                using (StreamReader reader = new StreamReader(path+"/compressions.txt"))
+            try
+            {
+                using (StreamReader reader = new StreamReader(path))
                 {
                     string siguiente = "";
                     do
@@ -91,8 +94,14 @@ namespace API.Controllers
                     } while (siguiente != null);
 
                     JsonSerializer.Serialize(Compressions);
+                    return Ok(Compressions);
                 }
-                return Ok(Compressions);
+            }
+            catch (Exception)
+            {
+                return NotFound();
+            }
+               
         }
     }
 }

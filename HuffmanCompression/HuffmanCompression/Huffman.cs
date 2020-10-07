@@ -247,17 +247,20 @@ namespace HuffmanCompression
             compressionRatio = CompressedSize / originalSize;
             compressionFactor = originalSize / CompressedSize;
             reductionPercentage = compressionRatio * 100;
-
+            path += "/CompressedFiles.txt"; 
             List<string> PreviousFile = new List<string>();
-            using (StreamReader reader = new StreamReader(path))
+            if (File.Exists(path))
             {
-                string NextLine;
-                do
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    NextLine = reader.ReadLine();
-                    PreviousFile.Add(NextLine);
-                } while (NextLine != null);
+                    string NextLine;
+                    do
+                    {
+                        NextLine = reader.ReadLine();
+                        PreviousFile.Add(NextLine);
+                    } while (NextLine != null);
 
+                }
             }
             int LineCount = PreviousFile.Count;
             using (StreamWriter writer = new StreamWriter(path))
