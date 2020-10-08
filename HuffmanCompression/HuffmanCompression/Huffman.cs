@@ -9,7 +9,7 @@ namespace HuffmanCompression
     public class Huffman: ICompression
     {
         Dictionary<char, Character> Characters = new Dictionary<char, Character>();
-       
+        //Dictionary<char, Character> Characters2 = new Dictionary<char, Character>();
         HeapQueue<BinaryNode> PriorityQueue = new HeapQueue<BinaryNode>();
         BinaryHuffTree huffTree = new BinaryHuffTree();
         double totalCharQuantity;
@@ -186,13 +186,55 @@ namespace HuffmanCompression
                 
             }
         }
+        //void AssignPrefixCodes2()
+        //{
+        //    foreach (var item in Characters2)
+        //    {
+        //        BinaryNode actual = new BinaryNode();
+        //        actual.character = item.Key;
+        //        actual.Priority = item.Value.frecuency / totalCharQuantity;
+        //        PriorityQueue.Add(actual);
+        //    }
+        //    bool exit = false;
+        //    BinaryNode Auxnode = new BinaryNode();
+        //    while (!exit)
+        //    {
+        //        //hay la posibilidad de que haya solo un caracter?
+        //        if (!PriorityQueue.IsEmpty())
+        //        {
+        //            Auxnode = PriorityQueue.Remove();
+        //        }
+        //        if (!PriorityQueue.IsEmpty())
+        //        {
+        //            huffTree.Insertion(Auxnode, PriorityQueue.Remove());
 
+        //        }
+        //        if (!PriorityQueue.IsEmpty())
+        //        {
+
+        //            PriorityQueue.Add(huffTree.GetRoot());
+        //        }
+        //        else
+        //        {
+        //            exit = true;
+        //        }
+        //    }
+        //    Dictionary<char, string> PrefixCodes = new Dictionary<char, string>();
+        //    huffTree.PreOrder(PrefixCodes);
+        //    foreach (var item in Characters2)
+        //    {
+        //        PrefixCodes.TryGetValue(item.Key, out string prefixCode);
+        //        item.Value.prefixcode = prefixCode;
+
+        //    }
+        //}
         public string Decompress(string CompressedTxt)
         {
             FillData(CompressedTxt);
             int largo = CompressedTxt.Length;
             CompressedTxt = CompressedTxt.Remove(0,2 + DifferentCharQuantity * (1 + FrecuencyBytes));
             AssignPrefixCodes();
+            //AssignPrefixCodes2();
             return PrefixCodeToCharText(CharToBitText(CompressedTxt));
             
         }
@@ -253,7 +295,7 @@ namespace HuffmanCompression
                 string binary_number= "";
                 for (int h = 1; h <= FrecuencyBytes; h++)
                 {
-                    binary_number += ToBinary(Text[i + h]);
+                    binary_number += ToBinary(Text[i + h]).PadLeft(8, '0');
                 }
 
                 newChar.frecuency = ToDecimal(binary_number);
@@ -261,9 +303,22 @@ namespace HuffmanCompression
                 Characters.Add(Text[i], newChar);
                 i += 1 + FrecuencyBytes;
             }
-            bool hola = CheckQuantity();
-
+            //bool hola = CheckQuantity();
+            //string e = ErrorChar();
         }
+        //string ErrorChar()
+        //{
+        //    string ret = "todos iguales";
+        //    foreach (var item in Characters)
+        //    {
+        //        Characters2.TryGetValue(item.Key, out Character val);
+        //        if (item.Value.frecuency != val.frecuency)
+        //        {
+        //            ret = item.Key.ToString();
+        //        }
+        //    }
+        //    return ret;
+        //}
 
         public void UpdateCompressions(string path, string name, string route, double originalSize, double CompressedSize)
         {
