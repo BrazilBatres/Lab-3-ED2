@@ -40,7 +40,7 @@ namespace API.Controllers
             {
                 await file.CopyToAsync(Memory);
                 string content = Encoding.ASCII.GetString(Memory.ToArray());
-                ByteArray = compression.Compress(content);
+                ByteArray = compression.Compress(content.ToCharArray());
                 originalSize = Memory.Length;
             }
             double compressedSize = ByteArray.Length;
@@ -59,27 +59,28 @@ namespace API.Controllers
         {
             string OriginalName = file.FileName;
             Huffman decompresser = new Huffman();
-            string decompressedText;
+            char[] decompressedText;
+            byte[] FinalChars = null;
             using (var Memory = new MemoryStream())
             {
                 await file.CopyToAsync(Memory);
-                string CompressedFile = "";
                 byte[] ByteArray = Memory.ToArray();
-                StringBuilder sb = new StringBuilder();
-                foreach (var item in ByteArray)
+                decompressedText = decompresser.Decompress(ByteArray);
+                FinalChars = new byte[decompressedText.Length];
+
+                for (int i = 0; i < decompressedText.Length; i++)
                 {
-                    sb.Append(Convert.ToChar(item));
+                    FinalChars[i] = (byte)decompressedText[i];
                 }
-                CompressedFile = sb.ToString();
-                decompressedText = decompresser.Decompress(CompressedFile);
+                
             }
             byte[] Content = null;
-            Content = Encoding.ASCII.GetBytes(decompressedText);
+            Content = FinalChars;
             CustomFile result = new CustomFile();
             result.FileBytes = Content;
             result.contentType = "text/plain";
             result.FileName = OriginalName;
-            return File(result.FileBytes, result.contentType, result.FileName);
+            return File(result.FileBytes, result.contentType, result.FileName + ".txt");
         }
 
         [HttpGet]
@@ -89,10 +90,18 @@ namespace API.Controllers
                 using (StreamReader reader = new StreamReader(path+ "/CompressedFiles.json"))
                 {
                 string json = reader.ReadToEnd();
-                List<Compression> Compressions = JsonSerializer.Deserialize<List<Compression>>(json);
+                List<Compression> Compressions = CompressionDeserialize(json);
                 JsonSerializer.Serialize(Compressions);
                 return Ok(Compressions);
                 }  
+        }
+
+        public static List<Compression> CompressionDeserialize(string content)
+        {
+            return JsonSerializer.Deserialize<List<Compression>>(content, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
         }
     }
 }

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Newtonsoft.Json;
 
 namespace HuffmanCompression
 {
@@ -346,29 +345,38 @@ namespace HuffmanCompression
             path += "/CompressedFiles.json";
 
             List<Compression> PreviousFile = new List<Compression>();
+            
 
             if (File.Exists(path))
             {
-                string file;
-                using (StreamReader reader = new StreamReader(path))
+                using (FileStream fs = File.OpenRead(path))
                 {
-                    file = reader.ReadToEnd();
+                    string file;
+                    MemoryStream memory = new MemoryStream();
+                    fs.CopyTo(memory);
+                    file = Encoding.ASCII.GetString(memory.ToArray());
+                    PreviousFile = DeserializeCompression(file);
                 }
-                PreviousFile = DeserializeCompression(file);
             }
             PreviousFile.Add(compression);
-
-            string json = JsonConvert.SerializeObject(PreviousFile.ToArray());
             using (StreamWriter writer = new StreamWriter(path))
             {
-                writer.Write(json);
+                writer.Write(WriteJson(PreviousFile));
             }
 
         }
-        
-        public List<Compression> DeserializeCompression(string content)
+
+        public string WriteJson(List<Compression> list)
         {
-            return System.Text.Json.JsonSerializer.Deserialize<List<Compression>>(content, new JsonSerializerOptions
+            return JsonSerializer.Serialize(list, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
+
+        public static List<Compression> DeserializeCompression(string content)
+        {
+            return JsonSerializer.Deserialize<List<Compression>>(content, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
@@ -376,7 +384,7 @@ namespace HuffmanCompression
 
         public string SerializeCompressions(List<Compression> list)
         {
-            return System.Text.Json.JsonSerializer.Serialize(list, new JsonSerializerOptions
+            return JsonSerializer.Serialize(list, new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
