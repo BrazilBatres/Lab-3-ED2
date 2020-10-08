@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace HuffmanCompression
 {
@@ -34,7 +36,7 @@ namespace HuffmanCompression
             {
                 suma += item.Value.frecuency;
             }
-            return suma == 208926;
+            return suma == totalCharQuantity;
         }
 
         void AssignFrecuency(char[] Text)
@@ -333,32 +335,52 @@ namespace HuffmanCompression
             compressionRatio = CompressedSize / originalSize;
             compressionFactor = originalSize / CompressedSize;
             reductionPercentage = compressionRatio * 100;
-            path += "/CompressedFiles.txt"; 
-            List<string> PreviousFile = new List<string>();
+
+            Compression compression = new Compression();
+            compression.OriginalName = name;
+            compression.CompressedFilePath = route;
+            compression.CompressionRatio = compressionRatio;
+            compression.CompressionFactor = compressionFactor;
+            compression.ReductionPercentage = reductionPercentage;
+
+            path += "/CompressedFiles.json";
+
+            List<Compression> PreviousFile = new List<Compression>();
+
             if (File.Exists(path))
             {
+                string file;
                 using (StreamReader reader = new StreamReader(path))
                 {
-                    string NextLine;
-                    do
-                    {
-                        NextLine = reader.ReadLine();
-                        PreviousFile.Add(NextLine);
-                    } while (NextLine != null);
-
+                    file = reader.ReadToEnd();
                 }
+                PreviousFile = DeserializeCompression(file);
             }
-            int LineCount = PreviousFile.Count;
+            PreviousFile.Add(compression);
+
+            string json = JsonConvert.SerializeObject(PreviousFile.ToArray());
             using (StreamWriter writer = new StreamWriter(path))
             {
-                for (int i = 0; i < LineCount; i++)
-                {
-                    writer.WriteLine(PreviousFile.First());
-                    PreviousFile.Remove(PreviousFile.First());
-                }
-                writer.WriteLine("{" + "\"originalName\" : \"" + name + "\", \"compressedFilePath\" : \"" + route + "\", \"compressionRatio\" : " + compressionRatio.ToString() + ", \"compressionFactor\" : " + compressionFactor.ToString() + " , \"reductionPercentage\" : " + reductionPercentage.ToString() + "}");
+                writer.Write(json);
             }
+
         }
         
+        public List<Compression> DeserializeCompression(string content)
+        {
+            return System.Text.Json.JsonSerializer.Deserialize<List<Compression>>(content, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
+
+        public string SerializeCompressions(List<Compression> list)
+        {
+            return System.Text.Json.JsonSerializer.Serialize(list, new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            });
+        }
+
     }
 }
