@@ -59,16 +59,25 @@ namespace API.Controllers
         {
             string OriginalName = file.FileName;
             Huffman decompresser = new Huffman();
-            byte[] decompressedText;
+            string decompressedText;
             using (var Memory = new MemoryStream())
             {
                 await file.CopyToAsync(Memory);
-                string CompressedFile = Encoding.ASCII.GetString(Memory.ToArray());
-                decompressedText = Encoding.ASCII.GetBytes(decompresser.Decompress(CompressedFile));
+                string CompressedFile = "";
+                byte[] ByteArray = Memory.ToArray();
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in ByteArray)
+                {
+                    sb.Append(Convert.ToChar(item));
+                }
+                CompressedFile = sb.ToString();
+                decompressedText = decompresser.Decompress(CompressedFile);
             }
+            byte[] Content = null;
+            Content = Encoding.ASCII.GetBytes(decompressedText);
             CustomFile result = new CustomFile();
-            result.FileBytes = decompressedText;
-            result.contentType = "text File / txt";
+            result.FileBytes = Content;
+            result.contentType = "text/plain";
             result.FileName = OriginalName;
             return File(result.FileBytes, result.contentType, result.FileName);
         }
@@ -78,9 +87,8 @@ namespace API.Controllers
         {
                 List<string> Compressions = new List<string>();
                 string path = _env.ContentRootPath;
-            try
-            {
-                using (StreamReader reader = new StreamReader(path))
+           
+                using (StreamReader reader = new StreamReader(path+ "/CompressedFiles.txt"))
                 {
                     string siguiente = "";
                     do
@@ -96,11 +104,7 @@ namespace API.Controllers
                     JsonSerializer.Serialize(Compressions);
                     return Ok(Compressions);
                 }
-            }
-            catch (Exception)
-            {
-                return NotFound();
-            }
+           
                
         }
     }
