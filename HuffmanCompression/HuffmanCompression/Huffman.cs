@@ -16,7 +16,7 @@ namespace HuffmanCompression
         int DifferentCharQuantity;
         int FrecuencyBytes;
         
-        public byte[] Compress(string ToCompresstxt)
+        public byte[] Compress(char[] ToCompresstxt)
         {
             totalCharQuantity = ToCompresstxt.Length;
             
@@ -37,7 +37,7 @@ namespace HuffmanCompression
             return suma == 208926;
         }
 
-        void AssignFrecuency(string Text)
+        void AssignFrecuency(char[] Text)
         {
             for (int i = 0; i < Text.Length; i++)
             {
@@ -62,7 +62,7 @@ namespace HuffmanCompression
             }
             DifferentCharQuantity= Characters.Count;
         }
-        string CharToPrefixCodeTxt(string Text)
+        string CharToPrefixCodeTxt(char [] Text)
         {
             string prefixCodeText = "";
             StringBuilder sb = new StringBuilder();
@@ -228,17 +228,18 @@ namespace HuffmanCompression
 
         //    }
         //}
-        public string Decompress(string CompressedTxt)
+        public char[] Decompress(byte[] CompressedTxt)
         {
             FillData(CompressedTxt);
             int largo = CompressedTxt.Length;
-            CompressedTxt = CompressedTxt.Remove(0,2 + DifferentCharQuantity * (1 + FrecuencyBytes));
+            //CompressedTxt = CompressedTxt.Remove(0,2 + DifferentCharQuantity * (1 + FrecuencyBytes));
             AssignPrefixCodes();
+            int Position = 2 + DifferentCharQuantity * (1 + FrecuencyBytes);
             //AssignPrefixCodes2();
-            return PrefixCodeToCharText(CharToBitText(CompressedTxt));
+            return PrefixCodeToCharText(CharToBitText(CompressedTxt, Position));
             
         }
-        string PrefixCodeToCharText(string Text)
+        char[] PrefixCodeToCharText(string Text)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(Text);
@@ -267,22 +268,27 @@ namespace HuffmanCompression
                 totalCharQuantity--;
                 builder.Append(accordingChar.ToString());
             }
-
-            return builder.ToString();
+            string Result = builder.ToString();
+            char[] ToReturn = new char[Result.Length];
+            for (int i = 0; i < Result.Length; i++)
+            {
+                ToReturn[i] = Result[i];
+            }
+            return ToReturn;
         }
-        string CharToBitText(string _text)
+        string CharToBitText(byte[] _text, int position)
         {
-            string bitText = "";
+            
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < _text.Length; i++)
+            for (int i = position; i < _text.Length; i++)
             {
                 sb.Append(ToBinary(_text[i]).PadLeft(8, '0'));
                 //bitText += ToBinary(_text[i]).PadLeft(8, '0');
             }
-            bitText = sb.ToString();
-            return bitText;
+             
+            return sb.ToString();
         }
-        void FillData(string Text)
+        void FillData(byte[] Text)
         {
            DifferentCharQuantity = Text[0];
             FrecuencyBytes = Text[1];
@@ -300,7 +306,7 @@ namespace HuffmanCompression
 
                 newChar.frecuency = ToDecimal(binary_number);
                 totalCharQuantity += newChar.frecuency;
-                Characters.Add(Text[i], newChar);
+                Characters.Add(Convert.ToChar(Text[i]), newChar);
                 i += 1 + FrecuencyBytes;
             }
             //bool hola = CheckQuantity();
