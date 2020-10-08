@@ -14,11 +14,7 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-          
-
-
-
-
+            Console.WriteLine("{" + "\"originalName\":\"" + "carlos" + "\",\"compressedFilePath\":\"" + "aca" + "\",\"compressionRatio\":" + "2.2" + ",\"compressionFactor\":" + "2.2" + ",\"reductionPercentage\":" + "2.2" + "}");
         }
     }
 }

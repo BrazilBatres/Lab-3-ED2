@@ -85,27 +85,14 @@ namespace API.Controllers
         [HttpGet]
         public IActionResult ReturnJSON()
         {
-                List<string> Compressions = new List<string>();
                 string path = _env.ContentRootPath;
-           
-                using (StreamReader reader = new StreamReader(path+ "/CompressedFiles.txt"))
+                using (StreamReader reader = new StreamReader(path+ "/CompressedFiles.json"))
                 {
-                    string siguiente = "";
-                    do
-                    {
-                        siguiente = reader.ReadLine();
-                        if (siguiente != null)
-                        {
-                            Compressions.Add(siguiente);
-                        }
-
-                    } while (siguiente != null);
-
-                    JsonSerializer.Serialize(Compressions);
-                    return Ok(Compressions);
-                }
-           
-               
+                string json = reader.ReadToEnd();
+                List<Compression> Compressions = JsonSerializer.Deserialize<List<Compression>>(json);
+                JsonSerializer.Serialize(Compressions);
+                return Ok(Compressions);
+                }  
         }
     }
 }
