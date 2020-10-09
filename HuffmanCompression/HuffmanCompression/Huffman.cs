@@ -229,15 +229,15 @@ namespace HuffmanCompression
 
         //    }
         //}
-        public char[] Decompress(byte[] CompressedTxt)
+        public char[] Decompress(string CompressedTxt)
         {
             FillData(CompressedTxt);
             int largo = CompressedTxt.Length;
-            //CompressedTxt = CompressedTxt.Remove(0,2 + DifferentCharQuantity * (1 + FrecuencyBytes));
+            CompressedTxt = CompressedTxt.Remove(0, 2 + DifferentCharQuantity * (1 + FrecuencyBytes));
             AssignPrefixCodes();
-            int Position = 2 + DifferentCharQuantity * (1 + FrecuencyBytes);
+            //int Position = 2 + DifferentCharQuantity * (1 + FrecuencyBytes);
             //AssignPrefixCodes2();
-            return PrefixCodeToCharText(CharToBitText(CompressedTxt, Position));
+            return PrefixCodeToCharText(CharToBitText(CompressedTxt/*, Position*/));
             
         }
         char[] PrefixCodeToCharText(string Text)
@@ -277,11 +277,11 @@ namespace HuffmanCompression
             }
             return ToReturn;
         }
-        string CharToBitText(byte[] _text, int position)
+        string CharToBitText(string _text/*, int position*/)
         {
             
             StringBuilder sb = new StringBuilder();
-            for (int i = position; i < _text.Length; i++)
+            for (int i = 0; i < _text.Length; i++)
             {
                 sb.Append(ToBinary(_text[i]).PadLeft(8, '0'));
                 //bitText += ToBinary(_text[i]).PadLeft(8, '0');
@@ -289,7 +289,7 @@ namespace HuffmanCompression
              
             return sb.ToString();
         }
-        void FillData(byte[] Text)
+        void FillData(string Text)
         {
            DifferentCharQuantity = Text[0];
             FrecuencyBytes = Text[1];

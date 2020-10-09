@@ -65,13 +65,13 @@ namespace API.Controllers
             {
                 await file.CopyToAsync(Memory);
                 byte[] ByteArray = Memory.ToArray();
-                decompressedText = decompresser.Decompress(ByteArray);
-                FinalChars = new byte[decompressedText.Length];
+                //decompressedText = decompresser.Decompress(ByteArray);
+                //FinalChars = new byte[decompressedText.Length];
 
-                for (int i = 0; i < decompressedText.Length; i++)
-                {
-                    FinalChars[i] = (byte)decompressedText[i];
-                }
+                //for (int i = 0; i < decompressedText.Length; i++)
+                //{
+                //    FinalChars[i] = (byte)decompressedText[i];
+                //}
                 
             }
             byte[] Content = null;
