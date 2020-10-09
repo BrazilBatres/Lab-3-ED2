@@ -32,7 +32,9 @@ namespace API.Controllers
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
             string path = _env.ContentRootPath;
+            string originalName = file.FileName;
             byte[] ByteArray = null;
+            string compressionPath = path + "/Compressions/" + originalName + ".huff";
             CustomFile result = new CustomFile();
             Huffman compression = new Huffman();
             double originalSize;
@@ -44,11 +46,14 @@ namespace API.Controllers
                 originalSize = Memory.Length;
             }
             double compressedSize = ByteArray.Length;
-            compression.UpdateCompressions(path, name, path, originalSize, compressedSize);
+            compression.UpdateCompressions(path, originalName, compressionPath, originalSize, compressedSize);
             result.FileBytes = ByteArray;
             result.contentType = "image / huff";
             result.FileName = name;
-
+            using (FileStream fs = System.IO.File.Create(compressionPath))
+            {
+                fs.Write(result.FileBytes);
+            }
             
             return File(result.FileBytes, result.contentType, result.FileName + ".huff");
         }
@@ -57,30 +62,37 @@ namespace API.Controllers
 
         public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
-            string OriginalName = file.FileName;
-            Huffman decompresser = new Huffman();
-            char[] decompressedText;
-            byte[] FinalChars = null;
-            using (var Memory = new MemoryStream())
+            try
             {
-                await file.CopyToAsync(Memory);
-                byte[] ByteArray = Memory.ToArray();
-                decompressedText = decompresser.Decompress(ByteArray);
-                FinalChars = new byte[decompressedText.Length];
-
-                for (int i = 0; i < decompressedText.Length; i++)
+                string OriginalName = file.FileName;
+                Huffman decompresser = new Huffman();
+                char[] decompressedText;
+                byte[] FinalChars = null;
+                using (var Memory = new MemoryStream())
                 {
-                    FinalChars[i] = (byte)decompressedText[i];
+                    await file.CopyToAsync(Memory);
+                    byte[] ByteArray = Memory.ToArray();
+                    decompressedText = decompresser.Decompress(ByteArray);
+                    FinalChars = new byte[decompressedText.Length];
+
+                    for (int i = 0; i < decompressedText.Length; i++)
+                    {
+                        FinalChars[i] = (byte)decompressedText[i];
+                    }
+
                 }
-                
+                byte[] Content = null;
+                Content = FinalChars;
+                CustomFile result = new CustomFile();
+                result.FileBytes = Content;
+                result.contentType = "text/plain";
+                result.FileName = OriginalName;
+                return File(result.FileBytes, result.contentType, result.FileName + ".txt");
             }
-            byte[] Content = null;
-            Content = FinalChars;
-            CustomFile result = new CustomFile();
-            result.FileBytes = Content;
-            result.contentType = "text/plain";
-            result.FileName = OriginalName;
-            return File(result.FileBytes, result.contentType, result.FileName + ".txt");
+            catch (Exception)
+            {
+                return erro
+            }
         }
 
         [HttpGet]
@@ -103,5 +115,6 @@ namespace API.Controllers
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
         }
+
     }
 }

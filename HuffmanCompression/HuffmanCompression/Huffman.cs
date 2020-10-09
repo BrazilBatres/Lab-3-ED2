@@ -346,7 +346,7 @@ namespace HuffmanCompression
 
             List<Compression> PreviousFile = new List<Compression>();
             
-
+            
             if (File.Exists(path))
             {
                 using (FileStream fs = File.OpenRead(path))
