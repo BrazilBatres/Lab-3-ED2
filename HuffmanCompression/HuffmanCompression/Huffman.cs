@@ -9,15 +9,14 @@ namespace HuffmanCompression
 {
     public class Huffman: ICompression
     {
-        Dictionary</*char*/byte, Character> Characters = new Dictionary</*char*/byte, Character>();
-        //Dictionary<char, Character> Characters2 = new Dictionary<char, Character>();
+        Dictionary<byte, Character> Characters = new Dictionary<byte, Character>();
         HeapQueue<BinaryNode> PriorityQueue = new HeapQueue<BinaryNode>();
         BinaryHuffTree huffTree = new BinaryHuffTree();
         double totalCharQuantity;
         int DifferentCharQuantity;
         int FrecuencyBytes;
         public string Name;
-        public byte[] Compress(byte[] /*string*/ ToCompresstxt, string FileName)
+        public byte[] Compress(byte[] ToCompresstxt, string FileName)
         {
             Name = FileName;
             totalCharQuantity = ToCompresstxt.Length;
@@ -25,7 +24,7 @@ namespace HuffmanCompression
             AssignPrefixCodes();
             return BitToCharText(CharToPrefixCodeTxt(ToCompresstxt));
         }
-        void AssignFrecuency(/*char*/byte[]/*string*/ Text)
+        void AssignFrecuency(byte[] Text)
         {
             for (int i = 0; i < Text.Length; i++)
             {
@@ -50,7 +49,7 @@ namespace HuffmanCompression
             }
             DifferentCharQuantity= Characters.Count;
         }
-        string CharToPrefixCodeTxt(/*char*/ byte[]/*string*/ Text)
+        string CharToPrefixCodeTxt(byte[] Text)
         {
             string prefixCodeText = "";
             StringBuilder sb = new StringBuilder();
@@ -58,10 +57,8 @@ namespace HuffmanCompression
             {
                 Characters.TryGetValue(Text[i], out Character character);
                 sb.Append(character.prefixcode);
-                //prefixCodeText += character.prefixcode;
             }
             prefixCodeText = sb.ToString();
-            //Esto podría ser un PadRight
             int zeros = 8-(prefixCodeText.Length % 8);
             for (int i = 0; i < zeros; i++)
             {
@@ -80,7 +77,6 @@ namespace HuffmanCompression
             {
                 Bytes.Enqueue(sb.ToString(0,8));
                 sb.Remove(0, 8);
-                //bitText = bitText.Remove(0, 8);
             }
             int length = Bytes.Count + Characters.Count * (1 + FrecuencyBytes)+3+Name.Length;
             byte[] DecimalBytes = new byte[length];
@@ -107,7 +103,6 @@ namespace HuffmanCompression
             int ToReturn = 0;
             for (int i = 0; i < _binaryNumber.Length; i++)
             {
-                double aux = Convert.ToInt32(_binaryNumber[_binaryNumber.Length - 1 - i].ToString()) * Math.Pow(2, i);
                 ToReturn += Convert.ToInt32(Convert.ToInt32(_binaryNumber[_binaryNumber.Length - 1 - i].ToString()) * Math.Pow(2, i));
             }
             return ToReturn;
