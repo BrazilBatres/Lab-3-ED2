@@ -147,7 +147,6 @@ namespace HuffmanCompression
             BinaryNode Auxnode = new BinaryNode();
             while (!exit)
             {
-                //hay la posibilidad de que haya solo un caracter?
                 if (!PriorityQueue.IsEmpty())
                 {
                     Auxnode = PriorityQueue.Remove();
@@ -167,7 +166,7 @@ namespace HuffmanCompression
                     exit = true;
                 }
             }
-            Dictionary</*char*/byte, string> PrefixCodes = new Dictionary</*char*/byte, string>();
+            Dictionary<byte, string> PrefixCodes = new Dictionary<byte, string>();
             huffTree.PreOrder(PrefixCodes);
             foreach (var item in Characters)
             {
@@ -176,71 +175,24 @@ namespace HuffmanCompression
                 
             }
         }
-        //void AssignPrefixCodes2()
-        //{
-        //    foreach (var item in Characters2)
-        //    {
-        //        BinaryNode actual = new BinaryNode();
-        //        actual.character = item.Key;
-        //        actual.Priority = item.Value.frecuency / totalCharQuantity;
-        //        PriorityQueue.Add(actual);
-        //    }
-        //    bool exit = false;
-        //    BinaryNode Auxnode = new BinaryNode();
-        //    while (!exit)
-        //    {
-        //        //hay la posibilidad de que haya solo un caracter?
-        //        if (!PriorityQueue.IsEmpty())
-        //        {
-        //            Auxnode = PriorityQueue.Remove();
-        //        }
-        //        if (!PriorityQueue.IsEmpty())
-        //        {
-        //            huffTree.Insertion(Auxnode, PriorityQueue.Remove());
-
-        //        }
-        //        if (!PriorityQueue.IsEmpty())
-        //        {
-
-        //            PriorityQueue.Add(huffTree.GetRoot());
-        //        }
-        //        else
-        //        {
-        //            exit = true;
-        //        }
-        //    }
-        //    Dictionary<char, string> PrefixCodes = new Dictionary<char, string>();
-        //    huffTree.PreOrder(PrefixCodes);
-        //    foreach (var item in Characters2)
-        //    {
-        //        PrefixCodes.TryGetValue(item.Key, out string prefixCode);
-        //        item.Value.prefixcode = prefixCode;
-
-        //    }
-        //}
         public byte[] Decompress(byte[] CompressedTxt)
         {
             FillData(CompressedTxt);
-            int largo = CompressedTxt.Length;
-            //CompressedTxt = CompressedTxt.Remove(0, 3 + DifferentCharQuantity * (CharBytes+ FrecuencyBytes));
             AssignPrefixCodes();
             int Position = Name.Length + 3 + DifferentCharQuantity * (1 + FrecuencyBytes);
-            //AssignPrefixCodes2();
             return PrefixCodeToCharText(CharToBitText(CompressedTxt, Position));
             
         }
-        /*char*//*Queue<byte>*//*string*/ byte[] PrefixCodeToCharText(string Text)
+        byte[] PrefixCodeToCharText(string Text)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(Text);
-            //StringBuilder builder = new StringBuilder();
             Queue<byte> result = new Queue<byte>();
             while (totalCharQuantity >= 1)
             {
                 int length = 1;
                 bool found = false;
                 byte accordingChar = 0;
-                //byte accordingChar = 0;
                 while (!found)
                 {
                     string prefix_code = sb.ToString(0, length);
@@ -258,29 +210,21 @@ namespace HuffmanCompression
                 }
                 totalCharQuantity--;
                 result.Enqueue(accordingChar);
-                //builder.Append(accordingChar.ToString());
+                
             }
             byte[] FinalText = new byte[result.Count];
             for (int i = 0; i < FinalText.Length; i++)
             {
                 FinalText[i] = result.Dequeue();
             }
-            //string Result = builder.ToString();
-            //char[] ToReturn = new char[Result.Length];
-            //for (int i = 0; i < Result.Length; i++)
-            //{
-            //    ToReturn[i] = Result[i];
-            //}
             return FinalText;
         }
         string CharToBitText(byte[] _text, int position)
         {
-            
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < _text.Length-position; i++)
             {
                 sb.Append(ToBinary(_text[position + i]).PadLeft(8, '0'));
-                //bitText += ToBinary(_text[i]).PadLeft(8, '0');
             }
              
             return sb.ToString();
