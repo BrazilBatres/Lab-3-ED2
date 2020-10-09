@@ -20,15 +20,10 @@ namespace HuffmanCompression
         public byte[] Compress(byte[] /*string*/ ToCompresstxt)
         {
             totalCharQuantity = ToCompresstxt.Length;
-            
             AssignFrecuency(ToCompresstxt);
-            
             AssignPrefixCodes();
             return BitToCharText(CharToPrefixCodeTxt(ToCompresstxt));
-
         }
-        
-
         void AssignFrecuency(/*char*/byte[]/*string*/ Text)
         {
             for (int i = 0; i < Text.Length; i++)
@@ -409,6 +404,11 @@ namespace HuffmanCompression
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
+        }
+
+        public byte[] FileToByteArray(MemoryStream stream, string path )
+        {
+
         }
 
     }
