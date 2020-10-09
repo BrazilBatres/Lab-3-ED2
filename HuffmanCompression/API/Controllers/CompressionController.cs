@@ -33,18 +33,23 @@ namespace API.Controllers
         {
             string path = _env.ContentRootPath;
             string originalName = file.FileName;
+            string resulte = "";
             byte[] ByteArray = null;
             string compressionPath = path + "/Compressions/" + originalName + ".huff";
             CustomFile result = new CustomFile();
             Huffman compression = new Huffman();
             double originalSize;
+            StringBuilder sb = new StringBuilder();
             using (var Memory = new MemoryStream())
             {
                 await file.CopyToAsync(Memory);
                 string content = Encoding.ASCII.GetString(Memory.ToArray());
-                ByteArray = compression.Compress(content.ToCharArray());
+                resulte = compression.Compress(content.ToCharArray());
+                sb.Append(originalName.ToString());
+                sb.Append(resulte);
                 originalSize = Memory.Length;
             }
+            ByteArray = Encoding.ASCII.GetBytes(sb.ToString());
             double compressedSize = ByteArray.Length;
             compression.UpdateCompressions(path, originalName, compressionPath, originalSize, compressedSize);
             result.FileBytes = ByteArray;
@@ -64,14 +69,32 @@ namespace API.Controllers
         {
             try
             {
-                string OriginalName = file.FileName;
+                string OriginalName;
                 Huffman decompresser = new Huffman();
                 char[] decompressedText;
                 byte[] FinalChars = null;
                 using (var Memory = new MemoryStream())
                 {
                     await file.CopyToAsync(Memory);
-                    byte[] ByteArray = Memory.ToArray();
+                    StreamReader reader = new StreamReader(Memory);
+                    string NextLine = "";
+                     OriginalName = reader.ReadLine();
+                    List<string> PreviousFile = new List<string>();
+                    do
+                    {
+                        NextLine = reader.ReadLine();
+                        if (NextLine != null)
+                        {
+                            PreviousFile.Add(NextLine);
+                        }
+                    } while (NextLine != null);
+                    StringBuilder sb = new StringBuilder();
+                    foreach (var item in PreviousFile)
+                    {
+                        sb.Append(item);
+                    }
+                    string FinalText = sb.ToString();
+                    byte[] ByteArray = Encoding.ASCII.GetBytes(FinalText);
                     decompressedText = decompresser.Decompress(ByteArray);
                     FinalChars = new byte[decompressedText.Length];
 
@@ -91,7 +114,7 @@ namespace API.Controllers
             }
             catch (Exception)
             {
-                return erro
+                return null; 
             }
         }
 
