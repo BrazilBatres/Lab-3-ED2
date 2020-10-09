@@ -40,7 +40,7 @@ namespace API.Controllers
             {
                 await file.CopyToAsync(Memory);
                 string content = Encoding.ASCII.GetString(Memory.ToArray());
-                ByteArray = compression.Compress(content.ToCharArray());
+                //ByteArray = compression.Compress(content.ToCharArray());
                 originalSize = Memory.Length;
             }
             double compressedSize = ByteArray.Length;

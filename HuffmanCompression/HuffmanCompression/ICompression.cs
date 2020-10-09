@@ -6,7 +6,7 @@ namespace HuffmanCompression
 {
     public interface ICompression
     {
-        public byte[] Compress(char[] ToCompresstxt);
-        public char[] Decompress(string CompressedTxt);
+        public byte[] Compress(/*char*/byte[] /*string*/ ToCompresstxt);
+        public /*char[]*//*Queue<byte>*/ byte[] Decompress(/*string*/byte[] CompressedTxt);
     }
 }

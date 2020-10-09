@@ -22,7 +22,7 @@ namespace HuffmanCompression
             return toReturn;
         }
 
-        public void PreOrder(Dictionary<char, string> KeyValuePairs)
+        public void PreOrder(Dictionary</*char*/byte, string> KeyValuePairs)
         {
             if (Root != null)
             {
@@ -30,7 +30,7 @@ namespace HuffmanCompression
                 RecursivePreOrder(KeyValuePairs, Root.RightSon, "", true);
             }
         }
-        void RecursivePreOrder(Dictionary<char, string> KeyValuePairs, BinaryNode Actual, string prefixCode, bool right)
+        void RecursivePreOrder(Dictionary</*char*/byte, string> KeyValuePairs, BinaryNode Actual, string prefixCode, bool right)
         {
             if (!right) prefixCode += '0';
             else prefixCode += '1';
