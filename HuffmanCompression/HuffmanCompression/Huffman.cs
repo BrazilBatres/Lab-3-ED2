@@ -66,6 +66,7 @@ namespace HuffmanCompression
                 //prefixCodeText += character.prefixcode;
             }
             prefixCodeText = sb.ToString();
+            //Esto podría ser un PadRight
             int zeros = 8-(prefixCodeText.Length % 8);
             for (int i = 0; i < zeros; i++)
             {
@@ -242,7 +243,7 @@ namespace HuffmanCompression
             int largo = CompressedTxt.Length;
             //CompressedTxt = CompressedTxt.Remove(0, 3 + DifferentCharQuantity * (CharBytes+ FrecuencyBytes));
             AssignPrefixCodes();
-            int Position = 2 + DifferentCharQuantity * (1 + FrecuencyBytes);
+            int Position = 3 + DifferentCharQuantity * (CharBytes + FrecuencyBytes);
             //AssignPrefixCodes2();
             return PrefixCodeToCharText(CharToBitText(CompressedTxt, Position));
             
@@ -295,9 +296,9 @@ namespace HuffmanCompression
         {
             
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < _text.Length; i++)
+            for (int i = 0; i < _text.Length-position; i++)
             {
-                sb.Append(ToBinary(_text[i]).PadLeft(8, '0'));
+                sb.Append(ToBinary(_text[position + i]).PadLeft(8, '0'));
                 //bitText += ToBinary(_text[i]).PadLeft(8, '0');
             }
              
