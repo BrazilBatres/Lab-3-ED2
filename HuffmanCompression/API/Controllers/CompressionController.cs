@@ -44,7 +44,7 @@ namespace API.Controllers
             {
                 await file.CopyToAsync(Memory);
                 ByteArray = Memory.ToArray();
-                ByteArray = compression.Compress(ByteArray);
+                ByteArray = compression.Compress(ByteArray, originalName);
                 originalSize = Memory.Length;
             }
 
@@ -60,7 +60,6 @@ namespace API.Controllers
 
         public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
-            string OriginalName = file.FileName;
             Huffman decompresser = new Huffman();
             byte[] decompressedText;
             using (var Memory = new MemoryStream())
@@ -68,6 +67,7 @@ namespace API.Controllers
                 await file.CopyToAsync(Memory);
                 byte[] ByteArray = Memory.ToArray();
                 decompressedText = decompresser.Decompress(ByteArray);
+                string OriginalName = decompresser.Name;
                 CustomFile result = new CustomFile();
                 result.FileBytes = decompressedText;
                 result.contentType = "text/plain";
