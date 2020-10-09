@@ -6,7 +6,7 @@ namespace HuffmanCompression
 {
     class BinaryNode:IPriority, IComparable
     {
-        public char character;
+        public byte character;
         public BinaryNode RightSon;
         public BinaryNode LeftSon;
 

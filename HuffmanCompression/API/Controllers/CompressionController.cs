@@ -35,7 +35,6 @@ namespace API.Controllers
             string originalName = file.FileName;
             string resulte = "";
             byte[] ByteArray = null;
-            string compressionPath = path + "/Compressions/" + originalName + ".huff";
             CustomFile result = new CustomFile();
             Huffman compression = new Huffman();
             double originalSize;
@@ -51,14 +50,11 @@ namespace API.Controllers
             }
             ByteArray = Encoding.ASCII.GetBytes(sb.ToString());
             double compressedSize = ByteArray.Length;
-            compression.UpdateCompressions(path, originalName, compressionPath, originalSize, compressedSize);
+            compression.UpdateCompressions(path, name, path, originalSize, compressedSize);
             result.FileBytes = ByteArray;
             result.contentType = "image / huff";
             result.FileName = name;
-            using (FileStream fs = System.IO.File.Create(compressionPath))
-            {
-                fs.Write(result.FileBytes);
-            }
+
             
             return File(result.FileBytes, result.contentType, result.FileName + ".huff");
         }
@@ -67,7 +63,11 @@ namespace API.Controllers
 
         public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
-            try
+            string OriginalName = file.FileName;
+            Huffman decompresser = new Huffman();
+            char[] decompressedText;
+            byte[] FinalChars = null;
+            using (var Memory = new MemoryStream())
             {
                 string OriginalName;
                 Huffman decompresser = new Huffman();
@@ -116,6 +116,13 @@ namespace API.Controllers
             {
                 return null; 
             }
+            byte[] Content = null;
+            Content = FinalChars;
+            CustomFile result = new CustomFile();
+            result.FileBytes = Content;
+            result.contentType = "text/plain";
+            result.FileName = OriginalName;
+            return File(result.FileBytes, result.contentType, result.FileName + ".txt");
         }
 
         [HttpGet]
@@ -138,6 +145,5 @@ namespace API.Controllers
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             });
         }
-
     }
 }
