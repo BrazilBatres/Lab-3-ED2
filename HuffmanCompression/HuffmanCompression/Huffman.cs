@@ -28,15 +28,6 @@ namespace HuffmanCompression
 
         }
         
-        bool CheckQuantity()
-        {
-            int suma = 0;
-            foreach (var item in Characters)
-            {
-                suma += item.Value.frecuency;
-            }
-            return suma == totalCharQuantity;
-        }
 
         void AssignFrecuency(/*char*/byte[]/*string*/ Text)
         {
