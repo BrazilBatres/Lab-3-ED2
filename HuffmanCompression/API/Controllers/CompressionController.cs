@@ -31,19 +31,20 @@ namespace API.Controllers
 
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
-            //try
-            //{
+            try
+            {
                 CustomFile result = new CustomFile();
                 Huffman compression = new Huffman();
                 string path = _env.ContentRootPath;
-                string originalName = file.FileName;
                 double originalSize;
+                string originalName;
                 MemoryStream Output = new MemoryStream();
                 using (var Memory = new MemoryStream())
                 {
                     if (file != null && name != null)
                     {
                         await file.CopyToAsync(Memory);
+                        originalName = file.FileName;
                     }
                     else
                     {
@@ -66,21 +67,22 @@ namespace API.Controllers
                     return File(result.FileBytes, result.contentType, result.FileName + ".huff");
                 }
 
-               
-            //}
-            //catch (Exception)
-            //{
 
-            //    return StatusCode(500);
-            //}
+            }   
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
         }
 
         [Route("decompress")]
 
         public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
-            try
-            {
+            //try
+            //{
+                string path = _env.ContentRootPath;
                 Huffman decompresser = new Huffman();
                 byte[] decompressedText;
                 using (var Memory = new MemoryStream())
@@ -93,8 +95,12 @@ namespace API.Controllers
                     {
                         return StatusCode(500);
                     }
+                    using (FileStream stream = System.IO.File.Create(path + "/Compressions/" + file.FileName))
+                    {
+                        stream.Write(Memory.ToArray());
+                    }
                     byte[] ByteArray = Memory.ToArray();
-                    decompressedText = decompresser.Decompress(ByteArray);
+                    decompressedText = decompresser.Decompress(path + "/Compressions/" + file.FileName, 100);
                     string OriginalName = decompresser.Name;
                     CustomFile result = new CustomFile();
                     result.FileBytes = decompressedText;
@@ -102,12 +108,12 @@ namespace API.Controllers
                     result.FileName = OriginalName;
                     return File(result.FileBytes, result.contentType, result.FileName);
                 }
-            }
-            catch (Exception)
-            {
+            //}
+            //catch (Exception)
+            //{
 
-                return StatusCode(500);
-            }
+            //    return StatusCode(500);
+            //}
         }
 
         [HttpGet]
