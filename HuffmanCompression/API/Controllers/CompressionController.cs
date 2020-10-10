@@ -31,17 +31,14 @@ namespace API.Controllers
 
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
-            try
-            {
+            //try
+            //{
                 CustomFile result = new CustomFile();
-                byte[] ByteArray = null;
                 Huffman compression = new Huffman();
-
-
                 string path = _env.ContentRootPath;
                 string originalName = file.FileName;
                 double originalSize;
-
+                MemoryStream Output = new MemoryStream();
                 using (var Memory = new MemoryStream())
                 {
                     if (file != null && name != null)
@@ -52,23 +49,30 @@ namespace API.Controllers
                     {
                         return StatusCode(500);
                     }
-                    ByteArray = Memory.ToArray();
-                    ByteArray = compression.Compress(ByteArray, originalName);
+                using (FileStream stream = System.IO.File.Create(path + "/Uploads/" + originalName))
+                {
+                    stream.Write(Memory.ToArray());
+                }
+                byte[] ByteArray = compression.Compress(path + "/Uploads/" + originalName, originalName, 100);
                     originalSize = Memory.Length;
+                    double compressedSize = ByteArray.Length;
+               
+
+
+                    compression.UpdateCompressions(path, originalName, path, originalSize, compressedSize);
+                    result.FileBytes = ByteArray;
+                    result.contentType = "text / plain";
+                    result.FileName = name;
+                    return File(result.FileBytes, result.contentType, result.FileName + ".huff");
                 }
 
-                double compressedSize = ByteArray.Length;
-                compression.UpdateCompressions(path, originalName, path, originalSize, compressedSize);
-                result.FileBytes = ByteArray;
-                result.contentType = "text / plain";
-                result.FileName = name;
-                return File(result.FileBytes, result.contentType, result.FileName + ".huff");
-            }
-            catch (Exception)
-            {
+               
+            //}
+            //catch (Exception)
+            //{
 
-                return StatusCode(500);
-            }
+            //    return StatusCode(500);
+            //}
         }
 
         [Route("decompress")]

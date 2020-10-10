@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 
-using HuffmanCompression;
-
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,14 +12,20 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            string hola = "Pablo Daniel Cuevas Paz";
-            byte[] Array = Encoding.ASCII.GetBytes(hola);
-            using (var Memory = new MemoryStream(Array))
+            string texto1;
+            string texto2;
+
+            using (StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\OJALA\cuento2.txt"))
             {
-                int bufferSize = 10;
-                BinaryReader reader = new BinaryReader(Memory);
-                byte[] res = reader.ReadBytes(bufferSize);
+                texto1 = reader.ReadToEnd();
             }
+            using (StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\OJALA\cuento.txt"))
+            {
+                texto2 = reader.ReadToEnd();
+            }
+
+            Console.WriteLine(texto2 == texto1);
+            Console.ReadKey();
         }
     }
 }

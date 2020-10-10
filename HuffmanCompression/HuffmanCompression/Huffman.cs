@@ -16,59 +16,85 @@ namespace HuffmanCompression
         int DifferentCharQuantity;
         int FrecuencyBytes;
         public string Name;
-        MemoryStream stream;
-        public byte[] Compress(MemoryStream MemStream, string FileName)
+        string Path;
+        int bufferSize;
+        public byte[] Compress(string path, string FileName, int bSize)
         {
-            stream = MemStream;
+            bufferSize = bSize;
+            Path = path;
             Name = FileName;
-            // ASIGNAR CUANDO SE ASIGNAN LAS FRECUENCIAS
-
-            totalCharQuantity = ToCompresstxt.Length;
-            AssignFrecuency(ToCompresstxt);
+            AssignFrecuency();
             AssignPrefixCodes();
-            return BitToCharText(CharToPrefixCodeTxt(ToCompresstxt));
+            return BitToCharText(CharToPrefixCodeTxt());
+            
         }
-        void AssignFrecuency(byte[] Text)
+        void AssignFrecuency()
         {
-            for (int i = 0; i < Text.Length; i++)
-            {
-                if (Characters.ContainsKey(Text[i]))
+            byte[] Text = null;
+            int counter = 0;
+            FileStream fs = File.OpenRead(Path);
+            BinaryReader reader = new BinaryReader(fs);
+            
+                while (fs.Length-(bufferSize * counter) > 0)
                 {
-                    Characters.TryGetValue(Text[i], out Character character);
-                    character.frecuency++;
+                    Text = reader.ReadBytes(bufferSize);
+                    for (int i = 0; i < Text.Length; i++)
+                    {
+                        if (Characters.ContainsKey(Text[i]))
+                        {
+                            Characters.TryGetValue(Text[i], out Character character);
+                            character.frecuency++;
+                        }
+                        else
+                        {
+                            Character newChar = new Character();
+                            newChar.frecuency = 1;
+                            Characters.Add(Text[i], newChar);
+                        }
+                    }
+                
+                counter++;
                 }
-                else
-                {
-                    Character newChar = new Character();
-                    newChar.frecuency = 1;
-                    Characters.Add(Text[i], newChar);
-                }
-            }
             foreach (var item in Characters)
             {
                 while (item.Value.frecuency > Math.Pow(2, FrecuencyBytes * 8) - 1)
                 {
                     FrecuencyBytes++;
                 }
+                totalCharQuantity += item.Value.frecuency;
             }
-            DifferentCharQuantity= Characters.Count;
+            DifferentCharQuantity = Characters.Count;
         }
-        string CharToPrefixCodeTxt(byte[] Text)
+        string CharToPrefixCodeTxt()
         {
-            string prefixCodeText = "";
+            int counter = 0;
+            byte[] Text = null;
+            
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < Text.Length; i++)
-            {
-                Characters.TryGetValue(Text[i], out Character character);
-                sb.Append(character.prefixcode);
-            }
+            string prefixCodeText = "";
+            FileStream fs = File.OpenRead(Path);
+            BinaryReader reader = new BinaryReader(fs);
+            
+                while (fs.Length - (bufferSize * counter) > 0)
+                {
+
+                    Text = reader.ReadBytes(bufferSize);
+                    for (int i = 0; i < Text.Length; i++)
+                    {
+                        Characters.TryGetValue(Text[i], out Character character);
+                        sb.Append(character.prefixcode);
+                    }
+
+                    counter++;
+                }
             prefixCodeText = sb.ToString();
-            int zeros = 8-(prefixCodeText.Length % 8);
+            int zeros = 8 - (prefixCodeText.Length % 8);
             for (int i = 0; i < zeros; i++)
             {
                 prefixCodeText += '0';
             }
             return prefixCodeText;
+
         }
 
         byte[] BitToCharText(string bitText)
@@ -100,7 +126,10 @@ namespace HuffmanCompression
             {
                 DecimalBytes[k+j] = Convert.ToByte(ToDecimal(Bytes.Dequeue()));
             }
+
+
             return DecimalBytes;
+            
         }
         int ToDecimal(string _binaryNumber)
         {
@@ -274,7 +303,7 @@ namespace HuffmanCompression
             compression.CompressionFactor = compressionFactor;
             compression.ReductionPercentage = reductionPercentage;
 
-            path += "/CompressedFiles.json";
+            path += @"\CompressedFiles.json";
 
             List<Compression> PreviousFile = new List<Compression>();
             
