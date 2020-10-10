@@ -17,7 +17,6 @@ namespace HuffmanCompression
         int FrecuencyBytes;
         public string Name;
         string Path;
-        int ReadBytes = 0;
         int bufferSize;
         public byte[] Compress(string path, string FileName, int bSize)
         {
@@ -204,14 +203,12 @@ namespace HuffmanCompression
                 
             }
         }
-        public byte[] Decompress(string path, int buffer)
+        public byte[] Decompress(byte[] CompressedTxt)
         {
-            Path = path;
-            bufferSize = buffer;
-            FillData();
+            FillData(CompressedTxt);
             AssignPrefixCodes();
             int Position = Name.Length + 3 + DifferentCharQuantity * (1 + FrecuencyBytes);
-            return PrefixCodeToCharText(CharToBitText());
+            return PrefixCodeToCharText(CharToBitText(CompressedTxt, Position));
             
         }
         byte[] PrefixCodeToCharText(string Text)
@@ -250,104 +247,45 @@ namespace HuffmanCompression
             }
             return FinalText;
         }
-        string CharToBitText()
+        string CharToBitText(byte[] _text, int position)
         {
-            FileStream fs = File.OpenRead(Path);
-            BinaryReader reader = new BinaryReader(fs);
-            reader.ReadBytes(ReadBytes+1);
             StringBuilder sb = new StringBuilder();
-            byte[] _text = null;
-            int counter = 0;
-            while (fs.Length - (bufferSize * counter) > 0)
+            for (int i = 0; i < _text.Length-position; i++)
             {
-                _text = reader.ReadBytes(bufferSize);
-                for (int i = 0; i < _text.Length; i++)
-                {
-                    sb.Append(ToBinary(_text[i]).PadLeft(8, '0'));
-                }
-                counter++;
+                sb.Append(ToBinary(_text[position + i]).PadLeft(8, '0'));
             }
-            
-            
              
             return sb.ToString();
         }
-        void FillData()
+        void FillData(byte[] Text)
         {
+            int w = 0;
+            Name = "";
+            while (Text[w] != 10)
+            {
+                Name += Convert.ToChar(Text[w]).ToString();
+                w++;
+            }
+            DifferentCharQuantity = Text[w+1];
+            FrecuencyBytes = Text[w+2];
             Characters.Clear();
             totalCharQuantity = 0;
-            FileStream fs = File.OpenRead(Path);
-            BinaryReader reader = new BinaryReader(fs);
-            byte[] Text = null;
-            int counter = 0;
-            bool FoundName = false, foundMeta = false; 
-            Name = "";
-            ReadBytes = 0;
-            while (fs.Length - (bufferSize * counter) > 0)
+            int i = w+3;
+            while (i < Name.Length + 3 + DifferentCharQuantity * (1 + FrecuencyBytes))
             {
-                int w = 0;
-                Text = reader.ReadBytes(bufferSize);
-                if (!FoundName)
+                Character newChar = new Character();
+                string binary_number= "";
+                for (int h = 1; h <= FrecuencyBytes; h++)
                 {
-                    while (Text[w] != 10 && w<Text.Length)
-                    {
-                        Name += Convert.ToChar(Text[w]).ToString();
-                        w++;
-                        ReadBytes++;
-                        if (Text[w] == 10)
-                        {
-                            FoundName = true;
-                        }
-                    }
-                    if (FoundName)
-                    {
-                        w++;
-                        ReadBytes++;
-                    }
-                }
-                if (!foundMeta)
-                {
-                    if (w < Text.Length)
-                    {
-                        DifferentCharQuantity = Text[w];
-                        w++;
-                        ReadBytes++;
-                    }
-                    if (w < Text.Length)
-                    {
-                        FrecuencyBytes = Text[w];
-                        w++;
-                        ReadBytes++;
-                        foundMeta = true;
-                    }
+                    binary_number += ToBinary(Text[i + h]).PadLeft(8, '0');
                 }
 
-                if (FoundName && foundMeta)
-                {
-                    int i = w;
-                    while (ReadBytes < Name.Length + 3 + DifferentCharQuantity * (1 + FrecuencyBytes) && i < Text.Length)
-                    {
-                        Text = reader.ReadBytes(bufferSize);
-                        Character newChar = new Character();
-                        string binary_number = "";
-                        for (int h = 1; h <= FrecuencyBytes; h++)
-                        {
-                            if (i+h < Text.Length)
-                            {
-                                binary_number += ToBinary(Text[i + h]).PadLeft(8, '0');
-                            }
-                        }
-
-                        newChar.frecuency = ToDecimal(binary_number);
-                        totalCharQuantity += newChar.frecuency;
-                        binary_number = ToBinary(Text[i]).PadLeft(8, '0');
-                        Characters.Add(Convert.ToByte(ToDecimal(binary_number)), newChar);
-                        i += 1 + FrecuencyBytes;
-                        ReadBytes += 1 + FrecuencyBytes; 
-                    }
-                }
-                counter++;
-            }
+                newChar.frecuency = ToDecimal(binary_number);
+                totalCharQuantity += newChar.frecuency;
+                binary_number = ToBinary(Text[i]).PadLeft(8, '0');
+                Characters.Add(Convert.ToByte(ToDecimal(binary_number)), newChar);
+                i += 1 + FrecuencyBytes;
+            }  
         }
         
         public void UpdateCompressions(string path, string name, string route, double originalSize, double CompressedSize)
