@@ -16,9 +16,13 @@ namespace HuffmanCompression
         int DifferentCharQuantity;
         int FrecuencyBytes;
         public string Name;
-        public byte[] Compress(byte[] ToCompresstxt, string FileName)
+        MemoryStream stream;
+        public byte[] Compress(MemoryStream MemStream, string FileName)
         {
+            stream = MemStream;
             Name = FileName;
+            // ASIGNAR CUANDO SE ASIGNAN LAS FRECUENCIAS
+
             totalCharQuantity = ToCompresstxt.Length;
             AssignFrecuency(ToCompresstxt);
             AssignPrefixCodes();

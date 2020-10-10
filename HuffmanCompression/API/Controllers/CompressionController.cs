@@ -31,48 +31,78 @@ namespace API.Controllers
 
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
-            CustomFile result = new CustomFile();
-            byte[] ByteArray = null;
-            Huffman compression = new Huffman();
-            
-            
-            string path = _env.ContentRootPath;
-            string originalName = file.FileName;
-            double originalSize;
-            
-            using (var Memory = new MemoryStream())
+            try
             {
-                await file.CopyToAsync(Memory);
-                ByteArray = Memory.ToArray();
-                ByteArray = compression.Compress(ByteArray, originalName);
-                originalSize = Memory.Length;
-            }
+                CustomFile result = new CustomFile();
+                byte[] ByteArray = null;
+                Huffman compression = new Huffman();
 
-            double compressedSize = ByteArray.Length;
-            compression.UpdateCompressions(path, originalName, path, originalSize, compressedSize);
-            result.FileBytes = ByteArray;
-            result.contentType = "text / plain";
-            result.FileName = name;
-            return File(result.FileBytes, result.contentType, result.FileName + ".huff");
+
+                string path = _env.ContentRootPath;
+                string originalName = file.FileName;
+                double originalSize;
+
+                using (var Memory = new MemoryStream())
+                {
+                    if (file != null && name != null)
+                    {
+                        await file.CopyToAsync(Memory);
+                    }
+                    else
+                    {
+                        return StatusCode(500);
+                    }
+                    ByteArray = Memory.ToArray();
+                    ByteArray = compression.Compress(ByteArray, originalName);
+                    originalSize = Memory.Length;
+                }
+
+                double compressedSize = ByteArray.Length;
+                compression.UpdateCompressions(path, originalName, path, originalSize, compressedSize);
+                result.FileBytes = ByteArray;
+                result.contentType = "text / plain";
+                result.FileName = name;
+                return File(result.FileBytes, result.contentType, result.FileName + ".huff");
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
         }
 
         [Route("decompress")]
 
         public async Task<ActionResult> Decompress([FromForm] IFormFile file)
         {
-            Huffman decompresser = new Huffman();
-            byte[] decompressedText;
-            using (var Memory = new MemoryStream())
-            { 
-                await file.CopyToAsync(Memory);
-                byte[] ByteArray = Memory.ToArray();
-                decompressedText = decompresser.Decompress(ByteArray);
-                string OriginalName = decompresser.Name;
-                CustomFile result = new CustomFile();
-                result.FileBytes = decompressedText;
-                result.contentType = "text/plain";
-                result.FileName = OriginalName;
-                return File(result.FileBytes, result.contentType, result.FileName);
+            try
+            {
+                Huffman decompresser = new Huffman();
+                byte[] decompressedText;
+                using (var Memory = new MemoryStream())
+                {
+                    if (file != null)
+                    {
+                        await file.CopyToAsync(Memory);
+                    }
+                    else
+                    {
+                        return StatusCode(500);
+                    }
+                    byte[] ByteArray = Memory.ToArray();
+                    decompressedText = decompresser.Decompress(ByteArray);
+                    string OriginalName = decompresser.Name;
+                    CustomFile result = new CustomFile();
+                    result.FileBytes = decompressedText;
+                    result.contentType = "text/plain";
+                    result.FileName = OriginalName;
+                    return File(result.FileBytes, result.contentType, result.FileName);
+                }
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
             }
         }
 

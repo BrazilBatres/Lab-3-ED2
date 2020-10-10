@@ -14,20 +14,13 @@ namespace TestConsole
     {
         static void Main(string[] args)
         {
-            string file = "Soy un archivo pa codificar";
-            using (var Memory = new MemoryStream())
+            string hola = "Pablo Daniel Cuevas Paz";
+            byte[] Array = Encoding.ASCII.GetBytes(hola);
+            using (var Memory = new MemoryStream(Array))
             {
-                StreamWriter writer = new StreamWriter(@"C:\Users\joseg\Desktop\temp.txt");
-                writer.WriteLine("Nombre del Archivo");
-                writer.Write(file);
-                writer.Close();
-            }
-
-            using (var Memory = new MemoryStream())
-            {
-                StreamReader reader = new StreamReader(@"C:\Users\joseg\Desktop\temp.txt");
-                string nombre = reader.ReadLine();
-                string arch = reader.ReadToEnd();
+                int bufferSize = 10;
+                BinaryReader reader = new BinaryReader(Memory);
+                byte[] res = reader.ReadBytes(bufferSize);
             }
         }
     }
