@@ -31,14 +31,13 @@ namespace API.Controllers
 
         public async Task<ActionResult> Compress(string name, [FromForm] IFormFile file)
         {
-            try
-            {
+            //try
+            //{
                 CustomFile result = new CustomFile();
                 Huffman compression = new Huffman();
                 string path = _env.ContentRootPath;
                 string originalName = file.FileName;
                 double originalSize;
-                MemoryStream Output = new MemoryStream();
                 using (var Memory = new MemoryStream())
                 {
                     if (file != null && name != null)
@@ -49,22 +48,13 @@ namespace API.Controllers
                     {
                         return StatusCode(500);
                     }
-                    if (System.IO.File.Exists(path + "/Uploads/" + originalName))
+                    using (FileStream stream = System.IO.File.Create(path + "/Uploads/" + originalName))
                     {
-                        System.IO.File.Delete(path + "/Uploads/" + originalName);
-                        using (FileStream stream = System.IO.File.Create(path + "/Uploads/" + originalName))
-                        {
-                            stream.Write(Memory.ToArray());
-                        }
+                        stream.Write(Memory.ToArray());
+                        stream.Close();
                     }
-                    else
-                    {
-                        using (FileStream stream = System.IO.File.Create(path + "/Uploads/" + originalName))
-                        {
-                            stream.Write(Memory.ToArray());
-                        }
-                    }
-                byte[] ByteArray = compression.Compress(path + "/Uploads/" + originalName, originalName, 100);
+                    
+                    byte[] ByteArray = compression.Compress(path + "/Uploads/" + originalName, originalName, 100);
                     originalSize = Memory.Length;
                     double compressedSize = ByteArray.Length;
                
@@ -78,13 +68,13 @@ namespace API.Controllers
                 }
 
 
-            }
-            catch (Exception)
-            {
+        //}
+        //    catch (Exception)
+        //    {
 
-                return StatusCode(500);
-            }
-        }
+        //        return StatusCode(500);
+    //}
+}
 
         [Route("decompress")]
 
@@ -108,7 +98,7 @@ namespace API.Controllers
                     byte[] ByteArray = Memory.ToArray();
                     decompressedText = decompresser.Decompress(ByteArray);
                     string OriginalName = decompresser.Name;
-                    using (FileStream stream = System.IO.File.Create(path + "/Uploads/" + OriginalName))
+                    using (FileStream stream = System.IO.File.Create(path + "/Compressions/" + OriginalName))
                     {
                         stream.Write(Memory.ToArray());
                     }
@@ -118,13 +108,13 @@ namespace API.Controllers
                     result.FileName = OriginalName;
                     return File(result.FileBytes, result.contentType, result.FileName);
                 }
-            }
+        }
             catch (Exception)
             {
 
                 return StatusCode(500);
-            }
-        }
+    }
+}
 
         [HttpGet]
         public IActionResult ReturnJSON()
